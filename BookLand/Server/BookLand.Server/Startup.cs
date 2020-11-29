@@ -2,17 +2,12 @@ namespace BookLand.Server
 {
     using Infrastructure;
     using Data;
-    using Data.Models;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Microsoft.IdentityModel.Tokens;
-    using System.Text;
 
     public class Startup
     {
@@ -22,50 +17,14 @@ namespace BookLand.Server
 
        public void ConfigureServices(IServiceCollection services)
         {
+            var appSettings = services.GetApplicationSettings(this.Configuration);
+
             services
                 .AddDbContext<BookLandDbContext>(options => options
-                    .UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")));
-
-            services
-                .AddDatabaseDeveloperPageExceptionFilter();
-
-            services
-                .AddIdentity<User, IdentityRole>(options =>
-                {
-                    options.Password.RequiredLength = 6;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                })
-                .AddEntityFrameworkStores<BookLandDbContext>();
-
-            var applicationSettingConfiguration = this.Configuration.GetSection("ApplicationSettings");
-            services.Configure<AppSettings>(applicationSettingConfiguration);
-
-            var appSettings = applicationSettingConfiguration.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-
-            services
-                .AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(x =>
-                {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                    };                
-                });
-
-            services.AddControllers();
+                    .UseSqlServer(this.Configuration.GetDefaultConnectionString()))
+                .AddIdentity()
+                .AddJwtAuthentication(appSettings)
+                .AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -75,22 +34,18 @@ namespace BookLand.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting();
-
-            app.UseCors(options => options
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod());
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
-            app.ApplyMigrations();
+            app.UseRouting()
+                .UseCors(options => options
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod())
+                .UseAuthentication()
+                .UseAuthorization()
+                .UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                })
+                .ApplyMigrations();
         }
     }
 }
