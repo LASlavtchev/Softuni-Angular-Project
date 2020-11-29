@@ -5,6 +5,6 @@ namespace BookLand.Server.Features.Books
 {
     public interface IBookService
     {
-        public Task<IEnumerable<string>> GetAll();
+        public Task<IEnumerable<T>> GetAll<T>();
     }
 }
