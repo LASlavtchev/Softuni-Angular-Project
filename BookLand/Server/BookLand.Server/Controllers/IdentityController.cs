@@ -47,7 +47,7 @@
 
 
         [Route(nameof(Login))]
-        public async Task<ActionResult<string>> Login(LoginRequestModel model)
+        public async Task<ActionResult<object>> Login(LoginRequestModel model)
         {
             var user = await this.userManager.FindByNameAsync(model.Username);
 
@@ -70,7 +70,8 @@
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.Name, user.UserName)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(
@@ -81,7 +82,10 @@
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var encryptedToken = tokenHandler.WriteToken(token);
 
-            return encryptedToken;
+            return new
+            {
+                Token = encryptedToken
+            };
         }
     }
 }

@@ -12,14 +12,14 @@ module.exports = function (config) {
       require('karma-coverage'),
       require('@angular-devkit/build-angular/plugins/karma')
     ],
-    client: {
+    BookLand: {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     jasmineHtmlReporter: {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/Client'),
+      dir: require('path').join(__dirname, './coverage/BookLand'),
       subdir: '.',
       reporters: [
         { type: 'html' },
