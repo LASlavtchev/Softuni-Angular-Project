@@ -1,13 +1,10 @@
-﻿namespace BookLand.Server.Controllers
+﻿namespace BookLand.Server.Features.Books
 {
-    using Models.Books;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
-    using BookLand.Server.Infrastructure;
+    using Infrastructure.Extensions;
+    using Features.Books.Models;
 
     public class BookController : ApiController
     {

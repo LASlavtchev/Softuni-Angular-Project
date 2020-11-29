@@ -1,4 +1,4 @@
-﻿namespace BookLand.Server.Controllers
+﻿namespace BookLand.Server.Features
 {
     using Microsoft.AspNetCore.Mvc;
 

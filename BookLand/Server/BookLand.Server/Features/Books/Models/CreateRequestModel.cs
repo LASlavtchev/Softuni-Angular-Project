@@ -1,4 +1,4 @@
-﻿namespace BookLand.Server.Models.Books
+﻿namespace BookLand.Server.Features.Books.Models
 {
     using System.ComponentModel.DataAnnotations;
 

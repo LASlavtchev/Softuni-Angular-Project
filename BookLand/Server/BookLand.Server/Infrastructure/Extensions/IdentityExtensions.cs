@@ -1,4 +1,4 @@
-﻿namespace BookLand.Server.Infrastructure
+﻿namespace BookLand.Server.Infrastructure.Extensions
 {
     using System.Security.Claims;
 

@@ -1,15 +1,44 @@
-﻿namespace BookLand.Server.Infrastructure
+﻿namespace BookLand.Server.Infrastructure.Extensions
 {
+    using Features.Books;
+    using Features.Identity;
     using Data;
     using Data.Models;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.IdentityModel.Tokens;
+    using Microsoft.IdentityModel.Tokens;    
+    using Microsoft.OpenApi.Models;
     using System.Text;
 
     public static class ServerCollectionExtensions
     {
+        public static AppSettings GetApplicationSettings(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var appSettingConfiguration = configuration.GetSection("ApplicationSettings");
+
+            services.Configure<AppSettings>(appSettingConfiguration);
+
+            var appSettings = appSettingConfiguration.Get<AppSettings>();
+
+            return appSettings;
+        }
+
+        public static IServiceCollection AddDatabase(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services
+                .AddDbContext<BookLandDbContext>(options => options
+                    .UseSqlServer(configuration.GetDefaultConnectionString()));
+
+            return services;
+        }
+
         public static IServiceCollection AddIdentity (this IServiceCollection services)
         {
             services
@@ -50,6 +79,30 @@
                         ValidateIssuer = false,
                         ValidateAudience = false,
                     };
+                });
+
+            return services;
+        }
+
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
+            services
+                .AddTransient<IIdentityService, IdentityService>()
+                .AddTransient<IBookService, BookService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddSwagger(this IServiceCollection services)
+        {
+            services
+                .AddSwaggerGen(options =>
+                {
+                    options.SwaggerDoc("v1", new OpenApiInfo 
+                    {
+                        Title = "My BookLand API",
+                        Version = "v1",                    
+                    });
                 });
 
             return services;

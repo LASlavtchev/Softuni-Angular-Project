@@ -1,6 +1,6 @@
 namespace BookLand.Server
 {
-    using Infrastructure;
+    using Infrastructure.Extensions;
     using Data;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -20,10 +20,11 @@ namespace BookLand.Server
             var appSettings = services.GetApplicationSettings(this.Configuration);
 
             services
-                .AddDbContext<BookLandDbContext>(options => options
-                    .UseSqlServer(this.Configuration.GetDefaultConnectionString()))
+                .AddDatabase(this.Configuration)
                 .AddIdentity()
                 .AddJwtAuthentication(appSettings)
+                .AddApplicationServices()
+                .AddSwagger()
                 .AddControllers();
         }
 
@@ -34,7 +35,9 @@ namespace BookLand.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseRouting()
+            app
+                .UseSwaggerUI()
+                .UseRouting()
                 .UseCors(options => options
                     .AllowAnyOrigin()
                     .AllowAnyHeader()

@@ -1,4 +1,4 @@
-﻿namespace BookLand.Server.Models.Identity
+﻿namespace BookLand.Server.Features.Identity.Models
 {
     using System.ComponentModel.DataAnnotations;
 
