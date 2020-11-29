@@ -12,6 +12,7 @@
     using Microsoft.IdentityModel.Tokens;    
     using Microsoft.OpenApi.Models;
     using System.Text;
+    using BookLand.Server.Data.Repositories;
 
     public static class ServerCollectionExtensions
     {
@@ -87,6 +88,7 @@
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services
+                .AddScoped(typeof(IRepository<>), typeof(EfRepository<>))
                 .AddTransient<IIdentityService, IdentityService>()
                 .AddTransient<IBookService, BookService>();
 

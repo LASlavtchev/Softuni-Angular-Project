@@ -1,13 +1,14 @@
 namespace BookLand.Server
 {
     using Infrastructure.Extensions;
-    using Data;
+    using Infrastructure.Mapping;
+    using Features.Books.Models;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using System.Reflection;
 
     public class Startup
     {
@@ -30,6 +31,8 @@ namespace BookLand.Server
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            AutoMapperConfig.RegisterMappings(typeof(BookListResponseModel).GetTypeInfo().Assembly);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -8,8 +8,7 @@
 
     public class BookController : ApiController
     {
-        [Authorize]
-        [HttpPost]
+        [HttpGet]
         public async Task<ActionResult<int>> Create(CreateRequestModel model)
         {
             var userId = this.User.GetId();
